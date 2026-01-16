@@ -1,0 +1,56 @@
+/* === ZENX ENHANCEMENTS (ADD-ONLY) === */
+:root{--zenx-primary:#4da6ff;--zenx-bg:#0a0a1e;--zenx-glass:rgba(15,15,40,0.85);--zenx-success:#00ff88;--zenx-warning:#ffaa00;--zenx-danger:#ff4466}
+.zenx-modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;z-index:1000;backdrop-filter:blur(10px)}
+.zenx-modal.active{display:flex}
+.zenx-modal-content{background:var(--zenx-glass);border:1px solid var(--zenx-primary);border-radius:20px;padding:30px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 0 40px rgba(77,166,255,0.4)}
+.zenx-modal h2{color:var(--zenx-primary);margin:0 0 20px;font-size:1.5rem}
+.zenx-modal-close{position:absolute;top:15px;right:20px;background:none;border:none;color:#fff;font-size:2rem;cursor:pointer;padding:0;width:auto}
+.zenx-btn{background:linear-gradient(135deg,var(--zenx-primary),#3d7dd8);border:none;color:#fff;padding:12px 24px;border-radius:10px;cursor:pointer;font-size:1rem;transition:all 0.3s;margin:5px;display:inline-flex;align-items:center;gap:8px}
+.zenx-btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(77,166,255,0.5)}
+.zenx-btn-secondary{background:transparent;border:2px solid var(--zenx-primary);color:var(--zenx-primary)}
+.zenx-btn-success{background:linear-gradient(135deg,var(--zenx-success),#00cc6a)}
+.zenx-btn-web3{background:linear-gradient(135deg,#f6851b,#e2761b)}
+.zenx-input{background:rgba(255,255,255,0.1);border:1px solid rgba(77,166,255,0.3);border-radius:10px;padding:12px 16px;color:#fff;font-size:1rem;width:100%;box-sizing:border-box;margin:10px 0}
+.zenx-input:focus{outline:none;border-color:var(--zenx-primary);box-shadow:0 0 10px rgba(77,166,255,0.3)}
+.zenx-panel{position:fixed;right:-400px;top:0;height:100%;width:380px;background:var(--zenx-glass);border-left:1px solid var(--zenx-primary);transition:right 0.3s;z-index:999;padding:20px;overflow-y:auto}
+.zenx-panel.active{right:0}
+.zenx-hud{position:fixed;top:20px;right:20px;background:var(--zenx-glass);border:1px solid var(--zenx-primary);border-radius:15px;padding:15px;min-width:200px;z-index:998;display:none}
+.zenx-hud.active{display:block}
+.zenx-hud-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(77,166,255,0.2)}
+.zenx-hud-item:last-child{border:none}
+.zenx-badge{position:fixed;bottom:20px;left:20px;background:var(--zenx-warning);color:#000;padding:8px 16px;border-radius:20px;font-size:0.85rem;font-weight:bold;z-index:997;display:none}
+.zenx-badge.active{display:block}
+.zenx-timeline{max-height:400px;overflow-y:auto}
+.zenx-timeline-item{background:rgba(77,166,255,0.1);border-left:3px solid var(--zenx-primary);padding:12px;margin:10px 0;border-radius:0 10px 10px 0}
+.zenx-timeline-item .time{font-size:0.8rem;color:rgba(255,255,255,0.6)}
+.zenx-wallet-status{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(77,166,255,0.1);border-radius:10px;margin:10px 0}
+.zenx-wallet-status.connected{border:1px solid var(--zenx-success)}
+.zenx-code-display{font-family:'Courier New',monospace;background:rgba(0,0,0,0.3);padding:15px;border-radius:10px;word-break:break-all;font-size:0.9rem}
+.zenx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}
+.zenx-stat{text-align:center;padding:15px;background:rgba(77,166,255,0.1);border-radius:10px}
+.zenx-stat-value{font-size:1.5rem;font-weight:bold;color:var(--zenx-primary)}
+.zenx-stat-label{font-size:0.8rem;opacity:0.7}
+.zenx-tabs{display:flex;gap:5px;margin-bottom:20px}
+.zenx-tab{flex:1;padding:10px;background:rgba(77,166,255,0.1);border:none;color:#fff;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.3s}
+.zenx-tab.active{background:var(--zenx-primary);color:var(--zenx-bg)}
+.zenx-feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:20px 0}
+.zenx-feature-card{background:rgba(77,166,255,0.1);border:1px solid rgba(77,166,255,0.2);border-radius:15px;padding:20px;text-align:center;cursor:pointer;transition:all 0.3s}
+.zenx-feature-card:hover{border-color:var(--zenx-primary);transform:translateY(-3px);box-shadow:0 10px 30px rgba(77,166,255,0.2)}
+.zenx-feature-card .icon{font-size:2rem;margin-bottom:10px}
+.zenx-feature-card .title{font-weight:bold;color:var(--zenx-primary)}
+.zenx-divider{height:1px;background:linear-gradient(90deg,transparent,var(--zenx-primary),transparent);margin:20px 0}
+.zenx-otp-input{display:flex;gap:8px;justify-content:center}
+.zenx-otp-input input{width:45px;height:55px;text-align:center;font-size:1.5rem;background:rgba(255,255,255,0.1);border:2px solid rgba(77,166,255,0.3);border-radius:10px;color:#fff}
+.zenx-otp-input input:focus{border-color:var(--zenx-primary);outline:none}
+.zenx-progress{height:4px;background:rgba(77,166,255,0.2);border-radius:2px;overflow:hidden;margin:10px 0}
+.zenx-progress-bar{height:100%;background:var(--zenx-primary);transition:width 0.3s}
+.zenx-device{display:flex;align-items:center;gap:15px;padding:15px;background:rgba(77,166,255,0.1);border-radius:10px;margin:10px 0}
+.zenx-device.current{border:1px solid var(--zenx-success)}
+.zenx-device-icon{font-size:1.5rem}
+.zenx-device-info{flex:1}
+.zenx-device-name{font-weight:bold}
+.zenx-device-meta{font-size:0.8rem;opacity:0.7}
+@keyframes zenx-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.zenx-loading{animation:zenx-pulse 1.5s infinite}
+@keyframes zenx-slide-in{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.zenx-animate-in{animation:zenx-slide-in 0.3s ease-out}

@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>ZENAuth - Advanced 3D Holographic Token Generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Enterprise-grade holographic token generator with Web3, biometric auth, and blockchain verification">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4da6ff">
+    <link rel="stylesheet" href="zenx.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -15,6 +21,7 @@
             margin: 0;
             overflow: hidden;
         }
+
         .container {
             background-color: rgba(15, 15, 40, 0.8);
             border-radius: 20px;
@@ -26,12 +33,14 @@
             max-width: 90%;
             width: 400px;
         }
+
         h1 {
             color: #4da6ff;
             text-shadow: 0 0 20px rgba(77, 166, 255, 0.7);
             font-size: 2.5rem;
             margin-bottom: 30px;
         }
+
         #tokenDisplay {
             font-size: 1.8rem;
             margin: 30px 0;
@@ -42,6 +51,7 @@
             word-wrap: break-word;
             text-shadow: 0 0 10px rgba(77, 166, 255, 0.7);
         }
+
         #hologramCanvas {
             position: fixed;
             top: 0;
@@ -50,6 +60,7 @@
             width: 100%;
             height: 100%;
         }
+
         button {
             background-color: #4da6ff;
             border: none;
@@ -67,11 +78,13 @@
             max-width: 300px;
             box-shadow: 0 0 15px rgba(77, 166, 255, 0.5);
         }
+
         button:hover {
             background-color: #3d96ff;
             box-shadow: 0 0 25px rgba(77, 166, 255, 0.8);
             transform: translateY(-3px) scale(1.05);
         }
+
         #copyNotification {
             display: none;
             color: #4da6ff;
@@ -79,52 +92,390 @@
             font-size: 1.2rem;
             animation: fadeInOut 2s ease-in-out;
         }
+
         #qrCodeContainer {
             margin-top: 20px;
             display: flex;
             justify-content: center;
         }
+
         @keyframes fadeInOut {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
             }
+
             h1 {
                 font-size: 2rem;
             }
+
             #tokenDisplay {
                 font-size: 1.4rem;
             }
+
             button {
                 font-size: 1rem;
                 padding: 12px 24px;
             }
         }
+
+        /* View Toggle Styles */
+        .view-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: linear-gradient(135deg, #4da6ff 0%, #2d7dd2 100%);
+            border: 2px solid rgba(77, 166, 255, 0.5);
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(77, 166, 255, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-toggle-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 25px rgba(77, 166, 255, 0.6);
+        }
+
+        .view-toggle-btn .toggle-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Focused View Mode */
+        body.focused-view .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 700px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        body.focused-view .key-showcase {
+            background: linear-gradient(145deg, rgba(77, 166, 255, 0.15) 0%, rgba(15, 15, 40, 0.9) 100%);
+            border: 2px solid rgba(77, 166, 255, 0.4);
+            border-radius: 16px;
+            padding: 40px 30px;
+            margin: 20px 0;
+            position: relative;
+            box-shadow:
+                0 0 40px rgba(77, 166, 255, 0.2),
+                inset 0 0 30px rgba(77, 166, 255, 0.05);
+        }
+
+        body.focused-view .key-showcase::before {
+            content: '🔑 YOUR KEY';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #0a0a1e;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #4da6ff;
+            letter-spacing: 2px;
+            border-radius: 4px;
+        }
+
+        body.focused-view #tokenDisplay {
+            font-size: 2.2rem;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(77, 166, 255, 0.2);
+            margin: 10px 0;
+            word-break: break-all;
+        }
+
+        body.focused-view .actions-container {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(77, 166, 255, 0.2);
+        }
+
+        body.focused-view .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        body.focused-view .actions-grid button {
+            width: 100%;
+            max-width: none;
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        body.focused-view .zenx-feature-grid {
+            grid-template-columns: repeat(6, 1fr);
+        }
+
+        @media (max-width: 700px) {
+            body.focused-view .actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            body.focused-view .zenx-feature-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            body.focused-view #tokenDisplay {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
+
 <body>
+    <!-- View Toggle Button -->
+    <button class="view-toggle-btn" onclick="toggleKeyView()" aria-label="Toggle key view mode">
+        <span class="toggle-icon">👁️</span>
+        <span class="toggle-text">Focus View</span>
+    </button>
+
     <div class="container">
         <h1>ZENAuth Holographic Token</h1>
-        <div id="tokenDisplay" onclick="copyToken()"></div>
-        <div id="copyNotification">Token copied to clipboard!</div>
-        <button onclick="generateToken()">Generate New Token</button>
-        <button onclick="toggleRotation()">Toggle Rotation</button>
-        <button onclick="toggleGlow()">Toggle Glow Effect</button>
-        <button onclick="saveAsImage()">Save as Image</button>
-        <button onclick="saveAsPDF()">Save as PDF</button>
-        <button onclick="downloadOBJ()">Download as OBJ</button>
-        <button onclick="showQRCode()">Show QR Code</button>
-        <div id="qrCodeContainer"></div>
+
+        <!-- Key Showcase Container -->
+        <div class="key-showcase">
+            <div id="tokenDisplay" onclick="copyToken()" role="button" aria-label="Click to copy token" tabindex="0">
+            </div>
+            <div id="copyNotification" role="status" aria-live="polite">Token copied to clipboard!</div>
+        </div>
+
+        <!-- Actions Container -->
+        <div class="actions-container">
+            <div class="actions-grid">
+                <button onclick="generateToken()" aria-label="Generate new token">Generate New Token</button>
+                <button onclick="toggleRotation()" aria-label="Toggle hologram rotation">Toggle Rotation</button>
+                <button onclick="toggleGlow()" aria-label="Toggle glow effect">Toggle Glow Effect</button>
+                <button onclick="saveAsImage()" aria-label="Save token as image">Save as Image</button>
+                <button onclick="saveAsPDF()" aria-label="Save token as PDF">Save as PDF</button>
+                <button onclick="downloadOBJ()" aria-label="Download 3D model">Download as OBJ</button>
+                <button onclick="showQRCode()" aria-label="Show QR code">Show QR Code</button>
+            </div>
+            <div id="qrCodeContainer" role="img" aria-label="QR Code"></div>
+        </div>
+
+        <!-- === ZENX ENHANCEMENT BUTTONS (ADD-ONLY) === -->
+        <div class="zenx-divider"></div>
+        <div class="zenx-feature-grid">
+            <div class="zenx-feature-card" onclick="ZENX.ui.showModal('zenx-auth-modal')">
+                <div class="icon">🔐</div>
+                <div class="title">Auth</div>
+            </div>
+            <div class="zenx-feature-card" onclick="ZENX.ui.showModal('zenx-web3-modal')">
+                <div class="icon">⛓️</div>
+                <div class="title">Web3</div>
+            </div>
+            <div class="zenx-feature-card" onclick="ZENX.ui.togglePanel('zenx-session-panel')">
+                <div class="icon">📱</div>
+                <div class="title">Devices</div>
+            </div>
+            <div class="zenx-feature-card" onclick="ZENX.ui.showModal('zenx-vault-modal')">
+                <div class="icon">🔑</div>
+                <div class="title">Vault</div>
+            </div>
+            <div class="zenx-feature-card" onclick="ZENX.ui.showModal('zenx-api-modal')">
+                <div class="icon">🔌</div>
+                <div class="title">API</div>
+            </div>
+            <div class="zenx-feature-card" onclick="ZENX.ui.showModal('zenx-audit-modal')">
+                <div class="icon">📋</div>
+                <div class="title">Audit</div>
+            </div>
+        </div>
     </div>
-    <canvas id="hologramCanvas"></canvas>
+    <canvas id="hologramCanvas" aria-hidden="true"></canvas>
+
+    <!-- === ZENX MODALS (ADD-ONLY) === -->
+
+    <!-- Auth Modal -->
+    <div id="zenx-auth-modal" class="zenx-modal" onclick="if(event.target===this)ZENX.ui.hideModal()">
+        <div class="zenx-modal-content zenx-animate-in">
+            <button class="zenx-modal-close" onclick="ZENX.ui.hideModal()">&times;</button>
+            <h2>🔐 Authentication Options</h2>
+            <div class="zenx-tabs">
+                <button class="zenx-tab active"
+                    onclick="document.querySelectorAll('.zenx-auth-tab').forEach(t=>t.style.display='none');document.getElementById('tab-passkey').style.display='block';this.parentElement.querySelectorAll('.zenx-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Passkey</button>
+                <button class="zenx-tab"
+                    onclick="document.querySelectorAll('.zenx-auth-tab').forEach(t=>t.style.display='none');document.getElementById('tab-magic').style.display='block';this.parentElement.querySelectorAll('.zenx-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Magic
+                    Link</button>
+                <button class="zenx-tab"
+                    onclick="document.querySelectorAll('.zenx-auth-tab').forEach(t=>t.style.display='none');document.getElementById('tab-totp').style.display='block';this.parentElement.querySelectorAll('.zenx-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">2FA/TOTP</button>
+            </div>
+            <div id="tab-passkey" class="zenx-auth-tab">
+                <p>Use biometric authentication (Face ID, Touch ID, Windows Hello) for secure passwordless login.</p>
+                <input type="text" class="zenx-input" placeholder="Username" id="passkey-username">
+                <button class="zenx-btn"
+                    onclick="ZENX.auth.webauthn.register(document.getElementById('passkey-username').value)"
+                    style="width:100%">🔐 Register Passkey</button>
+                <button class="zenx-btn zenx-btn-secondary" onclick="ZENX.auth.webauthn.authenticate()"
+                    style="width:100%;margin-top:10px">Login with Passkey</button>
+            </div>
+            <div id="tab-magic" class="zenx-auth-tab" style="display:none">
+                <p>Receive a secure login link via email - no password required.</p>
+                <input type="email" class="zenx-input" placeholder="your@email.com" id="magic-email">
+                <button class="zenx-btn"
+                    onclick="ZENX.auth.magicLink.sendLink(document.getElementById('magic-email').value)"
+                    style="width:100%">📧 Send Magic Link</button>
+                <div class="zenx-divider"></div>
+                <input type="text" class="zenx-input" placeholder="Paste token to verify" id="magic-token">
+                <button class="zenx-btn zenx-btn-secondary"
+                    onclick="ZENX.auth.magicLink.verify(document.getElementById('magic-token').value)"
+                    style="width:100%">Verify Token</button>
+            </div>
+            <div id="tab-totp" class="zenx-auth-tab" style="display:none">
+                <p>Add an extra layer of security with Time-based One-Time Passwords.</p>
+                <input type="text" class="zenx-input" placeholder="Account name" id="totp-account">
+                <button class="zenx-btn"
+                    onclick="const setup = ZENX.auth.totp.setup(document.getElementById('totp-account').value || 'default'); document.getElementById('totp-qr').innerHTML=''; new QRCode(document.getElementById('totp-qr'), {text: setup.url, width: 200, height: 200, colorDark: '#4da6ff', colorLight: '#0a0a1e'}); document.getElementById('totp-secret').textContent = setup.secret;"
+                    style="width:100%">🔑 Setup 2FA</button>
+                <div id="totp-qr" style="display:flex;justify-content:center;margin:20px 0"></div>
+                <div id="totp-secret" class="zenx-code-display" style="display:none"></div>
+                <div class="zenx-divider"></div>
+                <p>Enter your 6-digit code:</p>
+                <div class="zenx-otp-input">
+                    <input type="text" maxlength="1" oninput="this.nextElementSibling?.focus()">
+                    <input type="text" maxlength="1" oninput="this.nextElementSibling?.focus()">
+                    <input type="text" maxlength="1" oninput="this.nextElementSibling?.focus()">
+                    <input type="text" maxlength="1" oninput="this.nextElementSibling?.focus()">
+                    <input type="text" maxlength="1" oninput="this.nextElementSibling?.focus()">
+                    <input type="text" maxlength="1">
+                </div>
+                <button class="zenx-btn zenx-btn-success"
+                    onclick="const code = Array.from(document.querySelectorAll('.zenx-otp-input input')).map(i=>i.value).join(''); const secret = ZENX.storage.get('totp_secret'); if(ZENX.auth.totp.verify(secret, code)) ZENX.ui.toast('✅ Code verified!'); else ZENX.ui.toast('❌ Invalid code', 'error');"
+                    style="width:100%;margin-top:15px">Verify Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Web3 Modal -->
+    <div id="zenx-web3-modal" class="zenx-modal" onclick="if(event.target===this)ZENX.ui.hideModal()">
+        <div class="zenx-modal-content zenx-animate-in">
+            <button class="zenx-modal-close" onclick="ZENX.ui.hideModal()">&times;</button>
+            <h2>⛓️ Web3 Integration</h2>
+            <div id="zenx-wallet-status"></div>
+            <div class="zenx-divider"></div>
+            <h3 style="color:var(--zenx-primary)">Token Verification</h3>
+            <p>Cryptographically sign and verify your tokens on-chain for immutable proof of ownership.</p>
+            <button class="zenx-btn zenx-btn-web3" onclick="ZENX.web3.verifyToken(currentToken)" style="width:100%">⛓️
+                Verify Current Token</button>
+            <div class="zenx-grid" style="margin-top:20px">
+                <div class="zenx-stat">
+                    <div class="zenx-stat-value" id="web3-verified-count">0</div>
+                    <div class="zenx-stat-label">Verified Tokens</div>
+                </div>
+                <div class="zenx-stat">
+                    <div class="zenx-stat-value" id="web3-network">-</div>
+                    <div class="zenx-stat-label">Network</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vault Modal -->
+    <div id="zenx-vault-modal" class="zenx-modal" onclick="if(event.target===this)ZENX.ui.hideModal()">
+        <div class="zenx-modal-content zenx-animate-in">
+            <button class="zenx-modal-close" onclick="ZENX.ui.hideModal()">&times;</button>
+            <h2>🔑 Token Vault</h2>
+            <p>Your saved tokens with blockchain verification status.</p>
+            <button class="zenx-btn" onclick="ZENX.vault.save(currentToken)" style="width:100%;margin-bottom:20px">💾
+                Save Current Token</button>
+            <div id="zenx-vault-list"></div>
+        </div>
+    </div>
+
+    <!-- API Modal -->
+    <div id="zenx-api-modal" class="zenx-modal" onclick="if(event.target===this)ZENX.ui.hideModal()">
+        <div class="zenx-modal-content zenx-animate-in">
+            <button class="zenx-modal-close" onclick="ZENX.ui.hideModal()">&times;</button>
+            <h2>🔌 Developer API</h2>
+            <div class="zenx-tabs">
+                <button class="zenx-tab active"
+                    onclick="document.querySelectorAll('.zenx-api-tab').forEach(t=>t.style.display='none');document.getElementById('tab-apikeys').style.display='block';this.parentElement.querySelectorAll('.zenx-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">API
+                    Keys</button>
+                <button class="zenx-tab"
+                    onclick="document.querySelectorAll('.zenx-api-tab').forEach(t=>t.style.display='none');document.getElementById('tab-webhooks').style.display='block';this.parentElement.querySelectorAll('.zenx-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Webhooks</button>
+            </div>
+            <div id="tab-apikeys" class="zenx-api-tab">
+                <input type="text" class="zenx-input" placeholder="API Key Name" id="api-key-name">
+                <button class="zenx-btn"
+                    onclick="ZENX.apiKeys.generate(document.getElementById('api-key-name').value || 'Unnamed Key')"
+                    style="width:100%">🔐 Generate API Key</button>
+                <div id="zenx-api-keys-list" style="margin-top:20px"></div>
+            </div>
+            <div id="tab-webhooks" class="zenx-api-tab" style="display:none">
+                <input type="url" class="zenx-input" placeholder="https://your-webhook-url.com" id="webhook-url">
+                <button class="zenx-btn" onclick="ZENX.webhooks.add(document.getElementById('webhook-url').value)"
+                    style="width:100%">🔗 Add Webhook</button>
+                <div id="zenx-webhooks-list" style="margin-top:20px"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Modal -->
+    <div id="zenx-audit-modal" class="zenx-modal" onclick="if(event.target===this)ZENX.ui.hideModal()">
+        <div class="zenx-modal-content zenx-animate-in">
+            <button class="zenx-modal-close" onclick="ZENX.ui.hideModal()">&times;</button>
+            <h2>📋 Audit Log</h2>
+            <p>Complete security event history for compliance and monitoring.</p>
+            <button class="zenx-btn zenx-btn-secondary" onclick="ZENX.auditLog.export()"
+                style="width:100%;margin-bottom:20px">📥 Export JSON</button>
+            <div id="zenx-audit-timeline" class="zenx-timeline"></div>
+        </div>
+    </div>
+
+    <!-- Session Panel -->
+    <div id="zenx-session-panel" class="zenx-panel">
+        <h2 style="color:var(--zenx-primary);margin-top:0">📱 Device Management</h2>
+        <p>Manage trusted devices and active sessions.</p>
+        <div id="zenx-devices-list"></div>
+        <div class="zenx-divider"></div>
+        <button class="zenx-btn zenx-btn-secondary"
+            onclick="ZENX.session.devices=ZENX.session.devices.filter(d=>d.id===ZENX.session.current.id);ZENX.storage.set('devices',ZENX.session.devices);ZENX.session.render();ZENX.auditLog.log('logout_all_devices')"
+            style="width:100%">🚪 Log Out Other Devices</button>
+    </div>
+
+    <!-- Security HUD -->
+    <div id="zenx-security-hud" class="zenx-hud">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <strong style="color:var(--zenx-primary)">🛡️ Security</strong>
+            <button onclick="ZENX.ui.toggleHUD()"
+                style="background:none;border:none;color:#fff;cursor:pointer;padding:0;width:auto">&times;</button>
+        </div>
+        <div class="zenx-hud-content"></div>
+    </div>
+
+    <!-- Offline Badge -->
+    <div id="zenx-offline-badge" class="zenx-badge">📡 Offline Demo Mode</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="zenx-core.js"></script>
+    <script src="zenx-auth.js"></script>
     <script>
         const tokenDisplay = document.getElementById('tokenDisplay');
         let currentToken = '';
@@ -135,10 +486,10 @@
         function init() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ 
-                canvas: document.getElementById('hologramCanvas'), 
-                antialias: true, 
-                alpha: true 
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('hologramCanvas'),
+                antialias: true,
+                alpha: true
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
@@ -255,6 +606,13 @@
             currentToken = token;
             tokenDisplay.textContent = token;
             updateHologramText();
+
+            // === ZENX Enhancement ===
+            if (window.ZENX) {
+                ZENX.telemetry.increment('tokensGenerated');
+                ZENX.auditLog.log('token_generated', { info: token.slice(0, 8) + '...' });
+                ZENX.webhooks.trigger('token_generated', { token });
+            }
         }
 
         function updateHologramText() {
@@ -266,7 +624,7 @@
             });
 
             const loader = new THREE.FontLoader();
-            loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
+            loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function (font) {
                 const textGeometry = new THREE.TextGeometry(currentToken, {
                     font: font,
                     size: 0.3,
@@ -277,7 +635,7 @@
                     bevelSize: 0.02,
                     bevelSegments: 5
                 });
-                const textMaterial = new THREE.MeshPhongMaterial({ 
+                const textMaterial = new THREE.MeshPhongMaterial({
                     color: 0xffffff,
                     emissive: 0x4da6ff,
                     emissiveIntensity: 0.5
@@ -289,7 +647,7 @@
                 // Animate text appearance
                 textMesh.scale.set(0, 0, 0);
                 new TWEEN.Tween(textMesh.scale)
-                    .to({x: 1, y: 1, z: 1}, 1000)
+                    .to({ x: 1, y: 1, z: 1 }, 1000)
                     .easing(TWEEN.Easing.Elastic.Out)
                     .start();
             });
@@ -324,6 +682,23 @@
             glowMesh.visible = isGlowing;
         }
 
+        function toggleKeyView() {
+            const body = document.body;
+            const toggleBtn = document.querySelector('.view-toggle-btn');
+            const toggleText = toggleBtn.querySelector('.toggle-text');
+            const toggleIcon = toggleBtn.querySelector('.toggle-icon');
+
+            body.classList.toggle('focused-view');
+
+            if (body.classList.contains('focused-view')) {
+                toggleText.textContent = 'Standard View';
+                toggleIcon.textContent = '🔄';
+            } else {
+                toggleText.textContent = 'Focus View';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
         function copyToken() {
             navigator.clipboard.writeText(currentToken).then(() => {
                 const notification = document.getElementById('copyNotification');
@@ -346,14 +721,14 @@
         function saveAsPDF() {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF();
-            
+
             renderer.render(scene, camera);
             const imgData = renderer.domElement.toDataURL('image/jpeg', 1.0);
-            
+
             pdf.addImage(imgData, 'JPEG', 10, 10, 190, 190);
             pdf.setFontSize(20);
             pdf.text(`ZENAuth Token: ${currentToken}`, 10, 210);
-            
+
             pdf.save(`ZENAuth_Token_${currentToken}.pdf`);
         }
 
@@ -374,20 +749,30 @@
                 text: currentToken,
                 width: 128,
                 height: 128,
-                colorDark : "#4da6ff",
-                colorLight : "#0a0a1e"
+                colorDark: "#4da6ff",
+                colorLight: "#0a0a1e"
             });
         }
 
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'S') { e.preventDefault(); ZENX.ui.toggleHUD(); }
+            if (e.key === 'Escape') { ZENX.ui.hideModal(); document.getElementById('zenx-session-panel')?.classList.remove('active'); }
+        });
+
         init();
         generateToken();
+
+        // === ZENX Initialization ===
+        if (window.ZENX) ZENX.init();
     </script>
 </body>
+
 </html>
 <!--HTTPS only...-->

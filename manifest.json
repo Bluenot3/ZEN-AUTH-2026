@@ -1,0 +1,22 @@
+{
+  "name": "ZENAuth - Holographic Authentication Platform",
+  "short_name": "ZENAuth",
+  "description": "Advanced 3D holographic token generator with Web3, biometric auth, and enterprise security features",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a1e",
+  "theme_color": "#4da6ff",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230a0a1e' width='512' height='512' rx='64'/><circle cx='256' cy='256' r='180' fill='none' stroke='%234da6ff' stroke-width='20'/><circle cx='256' cy='256' r='120' fill='none' stroke='%234da6ff' stroke-width='12' opacity='0.7'/><circle cx='256' cy='256' r='60' fill='%234da6ff'/><text x='256' y='280' text-anchor='middle' fill='%230a0a1e' font-size='48' font-weight='bold'>Z</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["security", "utilities", "business"],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
